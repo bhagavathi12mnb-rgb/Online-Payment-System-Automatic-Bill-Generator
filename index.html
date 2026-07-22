@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Online Payment System & Automatic Bill Generator - Create professional invoices, manage payments, and generate digital receipts instantly.">
+  <title>Online Payment System & Automatic Bill Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">💳</div>
+      <span>OmniPay & Invoice</span>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="nav-btn active" data-view="dashboard">
+        <span>📊</span> Dashboard
+      </button>
+      <button class="nav-btn" data-view="generator">
+        <span>📄</span> Bill Generator
+      </button>
+      <button class="nav-btn" data-view="payment">
+        <span>⚡</span> Payment Gateway
+      </button>
+      <button class="nav-btn" data-view="history">
+        <span>🗂️</span> History
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <select id="currency-select" class="select-control" aria-label="Select Currency">
+        <option value="$">USD ($)</option>
+        <option value="₹">INR (₹)</option>
+        <option value="€">EUR (€)</option>
+        <option value="£">GBP (£)</option>
+      </select>
+      <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">☀️</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section id="dashboard-view" class="view-section active">
+      <div class="dashboard-hero">
+        <div class="dashboard-title">
+          <h1>Financial Overview</h1>
+          <p>Real-time online payment tracking and automated billing analytics.</p>
+        </div>
+        <div class="quick-actions">
+          <button id="btn-quick-create" class="btn btn-primary">➕ Create New Bill</button>
+          <button id="btn-quick-pay" class="btn btn-emerald">⚡ Quick Payment</button>
+        </div>
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon purple">💰</div>
+          <div class="stat-info">
+            <span class="stat-label">Total Revenue Processed</span>
+            <div id="stat-total-revenue" class="stat-value">$0.00</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">⏳</div>
+          <div class="stat-info">
+            <span class="stat-label">Pending Invoices</span>
+            <div id="stat-pending-amount" class="stat-value">$0.00</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon cyan">📜</div>
+          <div class="stat-info">
+            <span class="stat-label">Bills Generated</span>
+            <div id="stat-total-bills" class="stat-value">0</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-info">
+            <span class="stat-label">Successful Payments</span>
+            <div id="stat-paid-count" class="stat-value">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT TRANSACTIONS PANEL -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Recent Invoices & Transactions</h2>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Customer Name</th>
+                <th>Issue Date</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recent-transactions-body">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. INVOICE GENERATOR VIEW -->
+    <section id="generator-view" class="view-section">
+      <div class="generator-grid">
+        
+        <!-- LEFT: FORM CONTROLS PANEL -->
+        <div class="panel generator-form-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Automatic Bill Builder</h2>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="inv-number-input">Invoice ID</label>
+              <input type="text" id="inv-number-input" class="form-input" value="INV-2026-001">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inv-date">Issue Date</label>
+              <input type="date" id="inv-date" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="inv-due">Due Date</label>
+              <input type="date" id="inv-due" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cust-name">Customer / Client Name</label>
+            <input type="text" id="cust-name" class="form-input" value="Acme Corporation" placeholder="Acme Inc.">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="cust-email">Customer Email</label>
+              <input type="email" id="cust-email" class="form-input" value="billing@acme.com" placeholder="email@client.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cust-address">Address / Location</label>
+              <input type="text" id="cust-address" class="form-input" value="742 Evergreen Terrace, Suite 100" placeholder="Address...">
+            </div>
+          </div>
+
+          <!-- ITEMS BUILDER -->
+          <div class="items-builder">
+            <div class="items-header">
+              <span>Description</span>
+              <span>Qty</span>
+              <span>Price</span>
+              <span style="text-align: right;">Amount</span>
+              <span></span>
+            </div>
+            <div id="items-list-container">
+              <!-- Dynamic Rows -->
+            </div>
+            <button id="add-item-btn" class="btn btn-secondary btn-sm" style="margin-top: 0.75rem;">➕ Add Item Line</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="tax-rate">Tax Rate (%)</label>
+              <input type="number" id="tax-rate" class="form-input" min="0" max="100" value="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="discount-rate">Discount (%)</label>
+              <input type="number" id="discount-rate" class="form-input" min="0" max="100" value="5">
+            </div>
+          </div>
+
+          <!-- SUMMARY BOX -->
+          <div class="summary-box">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="summary-subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Estimated Tax:</span>
+              <span id="summary-tax">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Discount Amount:</span>
+              <span id="summary-discount">-$0.00</span>
+            </div>
+            <div class="summary-row total">
+              <span>Grand Total:</span>
+              <span id="summary-total" style="color: var(--primary);">$0.00</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
+            <button id="save-invoice-btn" class="btn btn-primary">💾 Save Invoice</button>
+            <button id="print-invoice-btn" class="btn btn-secondary">🖨️ Print / Save PDF</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: LIVE INVOICE PREVIEW -->
+        <div class="invoice-preview-card">
+          <div id="prev-stamp" class="inv-status-stamp pending">PENDING</div>
+
+          <header>
+            <div>
+              <div class="inv-brand-name">OmniPay Solutions</div>
+              <p style="font-size: 0.85rem; color: #64748b;">Automated Billing & Digital Receipts</p>
+            </div>
+            <div class="inv-title">
+              <h2>INVOICE</h2>
+              <div id="prev-inv-num" class="inv-number">INV-2026-001</div>
+            </div>
+          </header>
+
+          <div class="inv-meta-grid">
+            <div class="inv-meta-block">
+              <h4>Billed To</h4>
+              <p id="prev-cust-name" style="font-weight: 700;">Acme Corporation</p>
+              <p id="prev-cust-email">billing@acme.com</p>
+              <p id="prev-cust-address">742 Evergreen Terrace</p>
+            </div>
+            <div class="inv-meta-block" style="text-align: right;">
+              <h4>Invoice Details</h4>
+              <p><strong>Issue Date:</strong> <span id="prev-inv-date">2026-07-21</span></p>
+              <p><strong>Due Date:</strong> <span id="prev-inv-due">2026-08-04</span></p>
+              <p><strong>Status:</strong> <span id="prev-status-text" style="color: #f59e0b; font-weight: 700;">PENDING</span></p>
+            </div>
+          </div>
+
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th style="text-align: center;">Qty</th>
+                <th style="text-align: right;">Unit Price</th>
+                <th style="text-align: right;">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="prev-items-body">
+              <!-- Dynamically Rendered -->
+            </tbody>
+          </table>
+
+          <div class="inv-totals-box">
+            <div class="inv-total-row">
+              <span>Subtotal</span>
+              <span id="prev-subtotal">$0.00</span>
+            </div>
+            <div class="inv-total-row">
+              <span>Tax</span>
+              <span id="prev-tax">$0.00</span>
+            </div>
+            <div class="inv-total-row">
+              <span>Discount</span>
+              <span id="prev-discount">-$0.00</span>
+            </div>
+            <div class="inv-total-row grand-total">
+              <span>Total Amount</span>
+              <span id="prev-total">$0.00</span>
+            </div>
+          </div>
+
+          <div class="inv-footer-note">
+            <p>Thank you for your business! Payment is due within 14 days.</p>
+            <p>Powered by OmniPay Systems</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. PAYMENT GATEWAY VIEW -->
+    <section id="payment-view" class="view-section">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="font-family: var(--font-heading); font-size: 2rem;">Online Payment Gateway</h1>
+        <p style="color: var(--text-secondary);">Fast, encrypted payment simulation & instant receipt settlement.</p>
+      </div>
+
+      <div class="payment-layout">
+        <!-- METHOD TABS -->
+        <div>
+          <div class="panel" style="margin-bottom: 1.5rem;">
+            <div style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.5rem;">Invoice Summary</div>
+            <h3 id="pay-target-inv-id" style="font-family: var(--font-heading); font-size: 1.5rem;">INV-2026-001</h3>
+            <p id="pay-target-client" style="color: var(--text-secondary);">Client Name</p>
+            <div style="font-size: 2rem; font-weight: 800; color: var(--accent-emerald); margin-top: 0.5rem;" id="pay-target-amount">$0.00</div>
+          </div>
+
+          <div class="payment-methods-tabs">
+            <button class="pm-tab-btn active" data-method="card">
+              <div class="pm-icon">💳</div>
+              <div>
+                <div style="font-weight: 600;">Credit / Debit Card</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Visa, Mastercard, Amex, RuPay</div>
+              </div>
+            </button>
+
+            <button class="pm-tab-btn" data-method="upi">
+              <div class="pm-icon">📲</div>
+              <div>
+                <div style="font-weight: 600;">UPI / Instant QR Code</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Google Pay, PhonePe, Paytm, BHIM</div>
+              </div>
+            </button>
+
+            <button class="pm-tab-btn" data-method="netbanking">
+              <div class="pm-icon">🏛️</div>
+              <div>
+                <div style="font-weight: 600;">Net Banking</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">Direct Instant Bank Transfer</div>
+              </div>
+            </button>
+
+            <button class="pm-tab-btn" data-method="wallet">
+              <div class="pm-icon">👛</div>
+              <div>
+                <div style="font-weight: 600;">Digital Wallets</div>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">PayPal, Apple Pay</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- FORM CONTROLS -->
+        <div class="panel">
+
+          <!-- 1. CREDIT CARD FORM -->
+          <div id="pm-form-card" class="pm-method-form">
+            <!-- VISUAL CREDIT CARD CARD -->
+            <div class="credit-card-preview">
+              <div class="card-top">
+                <div class="card-chip"></div>
+                <div class="card-type-logo">VISA</div>
+              </div>
+              <div id="cc-num-display" class="card-number-display">•••• •••• •••• ••••</div>
+              <div class="card-bottom">
+                <div>
+                  <div style="font-size: 0.65rem; opacity: 0.8;">CARD HOLDER</div>
+                  <div id="cc-name-display" class="card-holder-display">YOUR NAME</div>
+                </div>
+                <div>
+                  <div style="font-size: 0.65rem; opacity: 0.8;">EXPIRES</div>
+                  <div id="cc-exp-display" class="card-exp-display">MM/YY</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="card-number-input">Card Number</label>
+              <input type="text" id="card-number-input" class="form-input" placeholder="4532 1234 5678 9012" maxlength="19">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="card-holder-input">Cardholder Name</label>
+              <input type="text" id="card-holder-input" class="form-input" placeholder="JOHN DOE">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="card-exp-input">Expiration Date</label>
+                <input type="text" id="card-exp-input" class="form-input" placeholder="12/28" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="card-cvv-input">CVV / CVC</label>
+                <input type="password" id="card-cvv-input" class="form-input" placeholder="•••" maxlength="4">
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. UPI QR FORM -->
+          <div id="pm-form-upi" class="pm-method-form" style="display: none;">
+            <div class="qr-container">
+              <div style="font-weight: 700; font-size: 1rem;">Scan QR to Pay</div>
+              <p style="font-size: 0.8rem; color: #64748b;">Open any UPI App on your phone to scan</p>
+              
+              <div class="qr-code-box">
+                <div class="qr-grid"></div>
+                <div class="scan-bar"></div>
+              </div>
+
+              <div style="font-size: 0.85rem; font-weight: 600; color: #0f172a;">UPI ID: omnipay@bank</div>
+            </div>
+          </div>
+
+          <!-- 3. NET BANKING FORM -->
+          <div id="pm-form-netbanking" class="pm-method-form" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="bank-select">Select Popular Bank</label>
+              <select id="bank-select" class="form-input">
+                <option>State Bank / National Reserve Bank</option>
+                <option>Chase / HDFC Bank</option>
+                <option>Bank of America / ICICI Bank</option>
+                <option>Wells Fargo / Axis Bank</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="customer-bank-id">User / Account ID</label>
+              <input type="text" id="customer-bank-id" class="form-input" placeholder="Enter banking user ID...">
+            </div>
+          </div>
+
+          <!-- 4. WALLET FORM -->
+          <div id="pm-form-wallet" class="pm-method-form" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="wallet-select">Select Digital Wallet</label>
+              <select id="wallet-select" class="form-input">
+                <option>PayPal Express</option>
+                <option>Apple Pay</option>
+                <option>Google Wallet</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="wallet-account-email">Wallet Account Email</label>
+              <input type="email" id="wallet-account-email" class="form-input" placeholder="paypal@example.com">
+            </div>
+          </div>
+
+          <button id="process-payment-btn" class="btn btn-emerald" style="width: 100%; margin-top: 1.5rem; padding: 0.9rem;">
+            ⚡ Complete Payment & Generate Receipt
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. HISTORY VIEW -->
+    <section id="history-view" class="view-section">
+      <div class="panel">
+        <div class="panel-header" style="flex-wrap: wrap; gap: 1rem;">
+          <h2 class="panel-title">Bill & Payment History</h2>
+          
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <input type="text" id="history-search" class="form-input" placeholder="Search client or invoice #..." style="width: 240px;">
+            <select id="history-filter-status" class="select-control">
+              <option value="ALL">All Statuses</option>
+              <option value="PAID">Paid Only</option>
+              <option value="PENDING">Pending Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Client Name</th>
+                <th>Date</th>
+                <th>Due Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SUCCESS MODAL -->
+  <div id="success-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="success-icon-wrapper">✓</div>
+      <h2 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 0.5rem;">Payment Successful!</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 1.25rem;">Transaction verified and receipt automatically created.</p>
+
+      <div style="background: var(--bg-primary); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.5rem; text-align: left; font-size: 0.9rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+          <span style="color: var(--text-secondary);">Invoice Ref:</span>
+          <span id="modal-inv-id" style="font-weight: 700;">INV-2026-001</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-secondary);">Amount Settled:</span>
+          <span id="modal-amount" style="font-weight: 800; color: var(--accent-emerald);">$0.00</span>
+        </div>
+      </div>
+
+      <button id="modal-close-btn" class="btn btn-primary" style="width: 100%;">View Paid Receipt</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
